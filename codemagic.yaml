@@ -1,0 +1,25 @@
+workflows:
+  react-native-android:
+    name: React Native Android
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      android_signing:
+        - my_keystore  # اسم ملف Keystore الذي ستضيفه لاحقًا في Codemagic
+    scripts:
+      - name: Clone dependencies
+        script: |
+          git clone https://github.com/telon-org/react-native-tele.git ../react-native-tele
+          git clone https://github.com/telon-org/react-native-sip2.git ../react-native-sip2
+          git clone https://github.com/telon-org/react-native-replace-dialer.git ../react-native-replace-dialer
+      - name: Install dependencies
+        script: yarn install
+      - name: Set Android SDK location
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
+      - name: Build Android release
+        script: |
+          cd android
+          ./gradlew assembleRelease
+    artifacts:
+      - android/app/build/outputs/apk/release/*.apk
