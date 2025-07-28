@@ -1,16 +1,16 @@
 version: 2.1
-orbs:
-  android: circleci/android@3.0.2
+
 jobs:
-  build-apk:
-    machine:
-      image: android:2024.11.1
+  say-hello:
+    docker:
+      - image: cimg/base:current
     steps:
       - checkout
       - run:
-          name: Build APK
-          command: ./gradlew assembleDebug
+          name: "Say hello"
+          command: "echo Hello, World!"
+
 workflows:
-  build-apk-workflow:
+  say-hello-workflow:
     jobs:
-      - build-apk
+      - say-hello
