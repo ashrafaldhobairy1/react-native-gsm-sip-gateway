@@ -1,16 +1,34 @@
 version: 2.1
 
-jobs:
-  say-hello:
+executors:
+  android-executor:
     docker:
-      - image: cimg/base:current
+      - image: circleci/android:2023.10.1-jdk17
+    working_directory: ~/repo
+
+jobs:
+  build:
+    executor: android-executor
     steps:
       - checkout
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: Install Node.js
+          command: |
+            curl -sL https://deb.nodesource.com/setup_18.x | bash -
+            apt-get install -y nodejs
+      - run:
+          name: Install Dependencies
+          command: |
+            cd telon-gateway-app
+            npm install
+      - run:
+          name: Build APK
+          command: |
+            cd telon-gateway-app/android
+            ./gradlew assembleRelease
 
 workflows:
-  say-hello-workflow:
+  version: 2
+  build:
     jobs:
-      - say-hello
+      - build
